@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 import os
-import re
+import datetime
 
 app = Flask(__name__)
 
@@ -9,9 +9,24 @@ def list_files(path, page_num, page_size, search_string=None):
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:
             full_path = os.path.join(dirpath, filename)
-            # if search_string is None or full_path has the search_string (case insensitive) then append to all_files
-            if search_string is None or re.search(search_string, full_path, re.IGNORECASE):
-                all_files.append(full_path)
+            if search_string is None or search_string.lower() in full_path.lower():
+                file_type = "file"
+                size = os.path.getsize(full_path)
+                try:
+                    created = datetime.datetime.fromtimestamp(os.path.getctime(full_path)).isoformat()
+                except OSError:
+                    created = None
+                all_files.append({"path": full_path, "type": file_type, "size": size, "created": created})
+        for dirname in dirnames:
+            full_path = os.path.join(dirpath, dirname)
+            if search_string is None or search_string.lower() in full_path.lower():
+                file_type = "directory"
+                size = 0
+                try:
+                    created = datetime.datetime.fromtimestamp(os.path.getctime(full_path)).isoformat()
+                except OSError:
+                    created = None
+                all_files.append({"path": full_path, "type": file_type, "size": size, "created": created})
     start_index = (page_num - 1) * page_size
     end_index = start_index + page_size
     page_files = all_files[start_index:end_index]
