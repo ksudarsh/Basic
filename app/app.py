@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import os
 import datetime
 
@@ -9,6 +9,7 @@ def list_files(path, page_num, page_size, search_string=None):
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:
             full_path = os.path.join(dirpath, filename)
+            full_path = os.path.normpath(full_path)
             if search_string is None or search_string.lower() in full_path.lower():
                 file_type = "file"
                 size = os.path.getsize(full_path)
@@ -19,6 +20,7 @@ def list_files(path, page_num, page_size, search_string=None):
                 all_files.append({"path": full_path, "type": file_type, "size": size, "created": created})
         for dirname in dirnames:
             full_path = os.path.join(dirpath, dirname)
+            full_path = os.path.normpath(full_path)
             if search_string is None or search_string.lower() in full_path.lower():
                 file_type = "directory"
                 size = 0
@@ -52,3 +54,7 @@ def list_files_paginated(directory):
             return html
     except:
         return "Directory not found", 404
+
+@app.route('/')
+def help():
+    return render_template("help.html")
