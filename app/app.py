@@ -9,6 +9,7 @@ def list_files(path, page_num, page_size, search_string=None):
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:
             full_path = os.path.join(dirpath, filename)
+            # Normalize the path to remove any double slashes or periods (e.g. /foo//bar/./baz -> /foo/bar/baz)
             full_path = os.path.normpath(full_path)
             if search_string is None or search_string.lower() in full_path.lower():
                 file_type = "file"
@@ -45,13 +46,7 @@ def list_files_paginated(directory):
         if request.args.get("json", False):
             return jsonify(files)
         else:
-            html = "<h1>Directory listing for {}</h1>".format(directory)
-            for file_info in files["page_files"]:
-                if file_info["type"] == "directory":
-                    html += "<p><strong>{}</strong> (directory) - Created: {}</p>".format(file_info["path"], file_info["created"])
-                else:
-                    html += "<p>{}, Size: {} bytes - Created: {}</p>".format(file_info["path"], file_info["size"], file_info["created"])
-            return html
+            return render_template("listing.html", page_num=files["page_num"], num_pages=files["total_pages"], directory=directory, files=files["page_files"])
     except:
         return "Directory not found", 404
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Directory listing for {{ directory }}</title>
+    <style>
+        table {
+          border-collapse: collapse;
+        }
+    
+        td, th {
+          border: 1px solid black;
+          padding: 8px;
+        }
+      </style>    
+  </head>
+  <body>
+    <h1>Directory listing for {{ directory }}</h1>
+    <p>Page {{ page_num }} of {{ num_pages }}</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Size</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file_info in files %}
+          <tr>
+            <td>{{ file_info["path"] }}</td>
+            <td>{{ file_info["type"] }}</td>
+            <td>{{ file_info["size"] }}</td>
+            <td>{{ file_info["created"] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
