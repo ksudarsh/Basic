@@ -1,6 +1,6 @@
 from flask import Flask
-from .app import *
+from app import ServerFunctions, create_app  
 
-def create_app():
-    app = Flask(__name__)
-    
+if __name__ == '__main__':
+    app_instance = create_app()
+    app_instance.app.run(debug=True)
