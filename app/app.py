@@ -7,9 +7,13 @@ import datetime
 class ServerFunctions:
     def __init__(self):
         self.app = Flask(__name__)
-        self.app.route('/files/<path:directory>')(self.list_files_paginated)
-        self.app.route('/')(self.help)
+        self.app.route('/files')(self.list_files_paginated)
+        self.app.route('/help')(self.help)
+        self.app.route('/')(self.index)
         
+    def index(self):
+        return render_template('index.html')
+    
     def list_files(self, path, page_num, page_size, search_string=None):
         all_files = []
         for dirpath, dirnames, filenames in os.walk(path):
@@ -43,8 +47,9 @@ class ServerFunctions:
         return {"page_num": page_num, "page_files": page_files, "total_pages": total_pages}
 
     # @app.route('/files/<path:directory>')
-    def list_files_paginated(self, directory):
+    def list_files_paginated(self):
         try:
+            directory = request.args.get("directory", None)
             page_num = int(request.args.get("page_num", 1))
             page_size = int(request.args.get("page_size", 10))
             search_string = request.args.get("search_string", None)
