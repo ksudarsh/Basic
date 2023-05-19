@@ -37,5 +37,16 @@
         {% endfor %}
       </tbody>
     </table>
+    <br>
+    <div>
+      <a href="/files?page_num=1&directory={{ directory }}">First Page</a> |
+      {% if page_num > 1 %}
+        <a href="/files?page_num={{ page_num - 1 }}&directory={{ directory }}">Previous Page</a> |
+      {% endif %}
+      {% if page_num < num_pages %}
+        <a href="/files?page_num={{ page_num + 1 }}&directory={{ directory }}">Next Page</a> |
+      {% endif %}
+      <a href="/files?page_num={{ num_pages }}&directory={{ directory }}">Last Page</a>
+    </div>
   </body>
 </html>
